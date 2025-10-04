@@ -1,0 +1,467 @@
+const { useState } = React;
+
+// Ícones lucide-react simplificados
+const BarChart3 = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M3 3v18h18" />
+    <path d="M18 17V9" />
+    <path d="M13 17V5" />
+    <path d="M8 17v-3" />
+  </svg>
+);
+
+const Calendar = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+    <path d="M16 2v4M8 2v4M3 10h18" />
+  </svg>
+);
+
+const Settings = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M12 1v6m0 6v6m-8-8h6m6 0h6" />
+  </svg>
+);
+
+const TrendingUp = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+    <polyline points="17 6 23 6 23 12" />
+  </svg>
+);
+
+const AlertCircle = ({ size = 24, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+);
+
+const SIGAP = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const equipamentos = [
+    { id: 1, nome: 'Guindaste 01', tipo: 'Guindaste', status: 'disponivel', uso: 45 },
+    { id: 2, nome: 'Empilhadeira 03', tipo: 'Empilhadeira', status: 'em_uso', uso: 78 },
+    { id: 3, nome: 'Reach Stacker 02', tipo: 'Reach Stacker', status: 'manutencao', uso: 62 },
+    { id: 4, nome: 'Guindaste 02', tipo: 'Guindaste', status: 'disponivel', uso: 34 },
+    { id: 5, nome: 'Empilhadeira 01', tipo: 'Empilhadeira', status: 'deslocamento', uso: 89 },
+    { id: 6, nome: 'Trator Terminal 04', tipo: 'Trator', status: 'disponivel', uso: 56 }
+  ];
+
+  const alertas = [
+    { tipo: 'critico', mensagem: 'Empilhadeira 05 - Manutenção vencida há 3 dias', tempo: '2h atrás' },
+    { tipo: 'atencao', mensagem: 'Capacidade insuficiente detectada para próxima semana', tempo: '5h atrás' },
+    { tipo: 'info', mensagem: 'Contrato de locação Guindaste 08 expira em 15 dias', tempo: '1d atrás' },
+    { tipo: 'critico', mensagem: 'Conflito de alocação: Reach Stacker 02 em múltiplas operações', tempo: '3h atrás' }
+  ];
+
+  const manutencoes = [
+    { equipamento: 'Guindaste 01', tipo: 'Preventiva', data: '2025-10-08', status: 'agendada' },
+    { equipamento: 'Empilhadeira 03', tipo: 'Preditiva', data: '2025-10-05', status: 'atrasada' },
+    { equipamento: 'Reach Stacker 02', tipo: 'Corretiva', data: '2025-10-03', status: 'em_andamento' },
+    { equipamento: 'Trator Terminal 04', tipo: 'Preventiva', data: '2025-10-12', status: 'agendada' }
+  ];
+
+  const getStatusColor = (status) => {
+    const colors = {
+      disponivel: 'bg-green-500',
+      em_uso: 'bg-blue-500',
+      manutencao: 'bg-yellow-500',
+      deslocamento: 'bg-red-500'
+    };
+    return colors[status] || 'bg-gray-500';
+  };
+
+  const getAlertStyle = (tipo) => {
+    const styles = {
+      critico: 'bg-red-50 border-l-4 border-red-500',
+      atencao: 'bg-yellow-50 border-l-4 border-yellow-500',
+      info: 'bg-blue-50 border-l-4 border-blue-500'
+    };
+    return styles[tipo];
+  };
+
+  const getAlertIcon = (tipo) => {
+    const colors = {
+      critico: 'text-red-500',
+      atencao: 'text-yellow-500',
+      info: 'text-blue-500'
+    };
+    return colors[tipo];
+  };
+
+  const Dashboard = () => (
+    <div className="space-y-6">
+      <div className="bg-white p-6">
+        <div className="grid grid-cols-4 gap-8">
+          <div className="text-center">
+            <p className="text-sm text-gray-500 mb-2">Total</p>
+            <p className="text-4xl font-light text-gray-800">24</p>
+          </div>
+          <div className="text-center border-l border-gray-200">
+            <p className="text-sm text-gray-500 mb-2">Disponíveis</p>
+            <p className="text-4xl font-light text-green-600">12</p>
+          </div>
+          <div className="text-center border-l border-gray-200">
+            <p className="text-sm text-gray-500 mb-2">Em Manutenção</p>
+            <p className="text-4xl font-light text-yellow-600">3</p>
+          </div>
+          <div className="text-center border-l border-gray-200">
+            <p className="text-sm text-gray-500 mb-2">Alertas Críticos</p>
+            <p className="text-4xl font-light text-red-600">2</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6">
+        <h3 className="text-lg font-medium mb-4 text-gray-800 pb-2 border-b-2 border-blue-500">
+          Status dos Equipamentos
+        </h3>
+        
+        <div className="mb-4 flex gap-6 text-xs text-gray-600">
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+            <span>Disponível</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+            <span>Em Uso</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+            <span>Manutenção</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+            <span>Deslocamento</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {equipamentos.map(eq => (
+            <div key={eq.id} className="flex items-center justify-between p-3 border border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className={`w-2.5 h-2.5 rounded-full ${getStatusColor(eq.status)}`}></div>
+                <div>
+                  <p className="text-sm text-gray-800">{eq.nome}</p>
+                  <p className="text-xs text-gray-500">{eq.tipo}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-400">{eq.uso}%</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6">
+          <h3 className="text-lg font-medium mb-4 text-gray-800 pb-2 border-b-2 border-blue-500">
+            Alertas Recentes
+          </h3>
+          <div className="space-y-3">
+            {alertas.map((alerta, idx) => (
+              <div key={idx} className={`p-3 ${getAlertStyle(alerta.tipo)}`}>
+                <div className="flex items-start gap-2">
+                  <AlertCircle size={16} className={`mt-0.5 ${getAlertIcon(alerta.tipo)}`} />
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-800">{alerta.mensagem}</p>
+                    <p className="text-xs text-gray-500 mt-1">{alerta.tempo}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white p-6">
+          <h3 className="text-lg font-medium mb-4 text-gray-800 pb-2 border-b-2 border-blue-500">
+            Taxa de Utilização por Tipo
+          </h3>
+          <div className="space-y-4">
+            {[
+              { nome: 'Guindastes', valor: 85 },
+              { nome: 'Empilhadeiras', valor: 72 },
+              { nome: 'Reach Stackers', valor: 68 },
+              { nome: 'Tratores Terminais', valor: 61 }
+            ].map((item, idx) => (
+              <div key={idx}>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-gray-700">{item.nome}</span>
+                  <span className="text-gray-500">{item.valor}%</span>
+                </div>
+                <div className="w-full bg-gray-100 h-2">
+                  <div className="bg-blue-500 h-2" style={{width: `${item.valor}%`}}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const Planejamento = () => (
+    <div className="bg-white p-6">
+      <h3 className="text-lg font-medium mb-4 text-gray-800 pb-2 border-b-2 border-blue-500">
+        Calendário de Equipamentos - Outubro 2025
+      </h3>
+      
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b-2 border-gray-200">
+              <th className="p-3 text-left text-sm font-medium text-gray-700">Equipamento</th>
+              <th className="p-3 text-center text-sm font-medium text-gray-700">Seg 06</th>
+              <th className="p-3 text-center text-sm font-medium text-gray-700">Ter 07</th>
+              <th className="p-3 text-center text-sm font-medium text-gray-700">Qua 08</th>
+              <th className="p-3 text-center text-sm font-medium text-gray-700">Qui 09</th>
+              <th className="p-3 text-center text-sm font-medium text-gray-700">Sex 10</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-gray-100">
+              <td className="p-3 text-sm text-gray-800">Guindaste 01</td>
+              <td className="p-3"><div className="bg-green-500 text-white text-xs p-2 text-center">Disponível</div></td>
+              <td className="p-3"><div className="bg-green-500 text-white text-xs p-2 text-center">Disponível</div></td>
+              <td className="p-3"><div className="bg-yellow-500 text-white text-xs p-2 text-center">Manutenção</div></td>
+              <td className="p-3"><div className="bg-yellow-500 text-white text-xs p-2 text-center">Manutenção</div></td>
+              <td className="p-3"><div className="bg-green-500 text-white text-xs p-2 text-center">Disponível</div></td>
+            </tr>
+            <tr className="border-b border-gray-100">
+              <td className="p-3 text-sm text-gray-800">Empilhadeira 03</td>
+              <td className="p-3"><div className="bg-blue-500 text-white text-xs p-2 text-center">Op. Navio A</div></td>
+              <td className="p-3"><div className="bg-blue-500 text-white text-xs p-2 text-center">Op. Navio A</div></td>
+              <td className="p-3"><div className="bg-green-500 text-white text-xs p-2 text-center">Disponível</div></td>
+              <td className="p-3"><div className="bg-blue-500 text-white text-xs p-2 text-center">Op. Navio B</div></td>
+              <td className="p-3"><div className="bg-blue-500 text-white text-xs p-2 text-center">Op. Navio B</div></td>
+            </tr>
+            <tr className="border-b border-gray-100">
+              <td className="p-3 text-sm text-gray-800">Reach Stacker 02</td>
+              <td className="p-3"><div className="bg-blue-500 text-white text-xs p-2 text-center">Op. Navio A</div></td>
+              <td className="p-3"><div className="bg-red-500 text-white text-xs p-2 text-center font-medium">CONFLITO</div></td>
+              <td className="p-3"><div className="bg-green-500 text-white text-xs p-2 text-center">Disponível</div></td>
+              <td className="p-3"><div className="bg-green-500 text-white text-xs p-2 text-center">Disponível</div></td>
+              <td className="p-3"><div className="bg-red-500 text-white text-xs p-2 text-center">Deslocamento</div></td>
+            </tr>
+            <tr className="border-b border-gray-100">
+              <td className="p-3 text-sm text-gray-800">Trator Terminal 04</td>
+              <td className="p-3"><div className="bg-green-500 text-white text-xs p-2 text-center">Disponível</div></td>
+              <td className="p-3"><div className="bg-blue-500 text-white text-xs p-2 text-center">Op. Pátio</div></td>
+              <td className="p-3"><div className="bg-blue-500 text-white text-xs p-2 text-center">Op. Pátio</div></td>
+              <td className="p-3"><div className="bg-blue-500 text-white text-xs p-2 text-center">Op. Pátio</div></td>
+              <td className="p-3"><div className="bg-green-500 text-white text-xs p-2 text-center">Disponível</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-6 flex gap-4 text-xs">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-green-500"></div>
+          <span className="text-gray-600">Disponível</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-blue-500"></div>
+          <span className="text-gray-600">Em Operação</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-yellow-500"></div>
+          <span className="text-gray-600">Manutenção</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-red-500"></div>
+          <span className="text-gray-600">Deslocamento/Conflito</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  const Manutencao = () => (
+    <div className="space-y-6">
+      <div className="bg-white p-6">
+        <h3 className="text-lg font-medium mb-4 text-gray-800 pb-2 border-b-2 border-blue-500">
+          Programação de Manutenções
+        </h3>
+        
+        <div className="space-y-2">
+          {manutencoes.map((man, idx) => (
+            <div key={idx} className="flex items-center justify-between py-3 border-b border-gray-100">
+              <div className="flex items-center gap-4">
+                <Settings size={20} />
+                <div>
+                  <p className="text-sm font-medium text-gray-800">{man.equipamento}</p>
+                  <p className="text-xs text-gray-500">Tipo: {man.tipo}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-700">{man.data}</p>
+                <div className="mt-1">
+                  {man.status === 'agendada' && <span className="text-xs text-blue-600">Agendada</span>}
+                  {man.status === 'atrasada' && <span className="text-xs text-red-600 font-medium">Atrasada</span>}
+                  {man.status === 'em_andamento' && <span className="text-xs text-yellow-600">Em Andamento</span>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white p-6">
+        <h3 className="text-lg font-medium mb-4 text-gray-800 pb-2 border-b-2 border-blue-500">
+          Estatísticas de Manutenção - Últimos 30 dias
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div className="border-l-4 border-blue-500 pl-4">
+            <p className="text-sm text-gray-600">Manutenções Realizadas</p>
+            <p className="text-3xl font-light text-gray-800 mt-1">18</p>
+          </div>
+          <div className="border-l-4 border-green-500 pl-4">
+            <p className="text-sm text-gray-600">Tempo Médio</p>
+            <p className="text-3xl font-light text-gray-800 mt-1">4.2h</p>
+          </div>
+          <div className="border-l-4 border-yellow-500 pl-4">
+            <p className="text-sm text-gray-600">Taxa de Preventiva</p>
+            <p className="text-3xl font-light text-gray-800 mt-1">78%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const Relatorios = () => (
+    <div className="bg-white p-6">
+      <h3 className="text-lg font-medium mb-4 text-gray-800 pb-2 border-b-2 border-blue-500">
+        Indicadores de Performance (KPIs)
+      </h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="border-l-4 border-green-500 pl-4">
+          <p className="text-sm text-gray-600 mb-1">Taxa de Utilização</p>
+          <p className="text-3xl font-light text-gray-800">73%</p>
+          <p className="text-xs text-green-600 mt-1">↑ 5% vs mês anterior</p>
+        </div>
+        
+        <div className="border-l-4 border-blue-500 pl-4">
+          <p className="text-sm text-gray-600 mb-1">Conflitos Evitados</p>
+          <p className="text-3xl font-light text-gray-800">18</p>
+          <p className="text-xs text-gray-500 mt-1">Este mês</p>
+        </div>
+        
+        <div className="border-l-4 border-yellow-500 pl-4">
+          <p className="text-sm text-gray-600 mb-1">Tempo Médio Manutenção</p>
+          <p className="text-3xl font-light text-gray-800">4.2h</p>
+          <p className="text-xs text-green-600 mt-1">↓ 0.8h vs mês anterior</p>
+        </div>
+      </div>
+
+      <div>
+        <p className="text-sm font-medium text-gray-700 mb-4">Disponibilidade por Tipo de Equipamento</p>
+        <div className="space-y-4">
+          {[
+            { nome: 'Guindastes', valor: 85 },
+            { nome: 'Empilhadeiras', valor: 72 },
+            { nome: 'Reach Stackers', valor: 68 },
+            { nome: 'Tratores Terminais', valor: 61 }
+          ].map((item, idx) => (
+            <div key={idx}>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-700">{item.nome}</span>
+                <span className="text-gray-500">{item.valor}%</span>
+              </div>
+              <div className="w-full bg-gray-100 h-2">
+                <div className="bg-blue-500 h-2" style={{width: `${item.valor}%`}}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-blue-600 text-white p-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-light">SIGAP - SC Portos</h1>
+          <p className="text-blue-100 text-sm mt-1">Sistema Integrado de Gestão de Ativos Portuários</p>
+        </div>
+      </div>
+
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto">
+          <nav className="flex gap-0">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 ${
+                activeTab === 'dashboard'
+                  ? 'text-blue-600 border-blue-600'
+                  : 'text-gray-600 border-transparent hover:text-gray-800'
+              }`}
+            >
+              <BarChart3 size={20} />
+              Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab('planejamento')}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 ${
+                activeTab === 'planejamento'
+                  ? 'text-blue-600 border-blue-600'
+                  : 'text-gray-600 border-transparent hover:text-gray-800'
+              }`}
+            >
+              <Calendar size={20} />
+              Planejamento
+            </button>
+            <button
+              onClick={() => setActiveTab('manutencao')}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 ${
+                activeTab === 'manutencao'
+                  ? 'text-blue-600 border-blue-600'
+                  : 'text-gray-600 border-transparent hover:text-gray-800'
+              }`}
+            >
+              <Settings size={20} />
+              Manutenção
+            </button>
+            <button
+              onClick={() => setActiveTab('relatorios')}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 ${
+                activeTab === 'relatorios'
+                  ? 'text-blue-600 border-blue-600'
+                  : 'text-gray-600 border-transparent hover:text-gray-800'
+              }`}
+            >
+              <TrendingUp size={20} />
+              Relatórios
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto p-6">
+        {activeTab === 'dashboard' && <Dashboard />}
+        {activeTab === 'planejamento' && <Planejamento />}
+        {activeTab === 'manutencao' && <Manutencao />}
+        {activeTab === 'relatorios' && <Relatorios />}
+      </div>
+
+      <div className="bg-white border-t border-gray-200 mt-12">
+        <div className="max-w-7xl mx-auto p-6 text-center text-sm text-gray-600">
+          <p>SIGAP - Protótipo desenvolvido pelo IFSC para o Programa Rotas para Inovação</p>
+          <p className="text-xs text-gray-400 mt-1">Outubro 2025 - Versão 1.0</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Renderizar no DOM
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
+root.render(<SIGAP />);
