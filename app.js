@@ -453,7 +453,7 @@ const SIGAP = () => {
 
       <div className="bg-white border-t border-gray-200 mt-12">
         <div className="max-w-7xl mx-auto p-6 text-center text-sm text-gray-600">
-          <p>SIGAP - Protótipo desenvolvido pelo IFSC para o Programa Rotas para Inovação</p>
+          <p>SIGAP - Protótipo desenvolvido pela Kamtech para o Programa Rotas para Inovação</p>
           <p className="text-xs text-gray-400 mt-1">Outubro 2025 - Versão 1.0</p>
         </div>
       </div>
